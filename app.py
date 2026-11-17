@@ -163,6 +163,20 @@ k = st.sidebar.slider("Número de grupos (K)", 2, 10, CFG_BASE["k"])
 cfg = dict(usar_log=usar_log, recorte=recorte, n_comp=n_comp, k=k)
 base = es_config_base(cfg, variables)
 
+
+def texto_base(texto):
+    """Muestra un comentario con cifras escritas a mano solo si la configuración es la recomendada.
+
+    Así el texto nunca contradice a los gráficos cuando alguien mueve la barra lateral.
+    """
+    if base:
+        st.markdown(texto)
+    else:
+        st.info(
+            "Este comentario describe la **configuración recomendada**. Con la configuración actual de la "
+            "barra lateral las cifras cambian: guíate por los gráficos y tablas, que sí se recalculan."
+        )
+
 etiquetas, sil = segmentar(variables, usar_log, recorte, n_comp, k)
 res = df.copy()
 res["Grupo"] = etiquetas
@@ -240,11 +254,13 @@ cosas distintas de uno que vive de regalías, aunque los dos tengan el mismo pun
 - **Fuente:** [TerriData – DNP](https://terridata.dnp.gov.co/), descarga masiva de la dimensión *Finanzas
   públicas*. Los indicadores vienen del **Nuevo Índice de Desempeño Fiscal 2024** (metodología del DNP
   desde 2020) y de las **Operaciones Efectivas de Caja** (recaudo per cápita), que el DNP construye a partir
-  de los reportes CUIPO y FUT de los municipios.
-- **Cobertura:** 1.102 municipios con información completa para 2024 (el país tiene 1.103 contando Bogotá).
+  de los reportes CUIPO y FUT de los municipios. El DNP publicó el **IDF 2025** el 6 de noviembre de 2026;
+  este trabajo usa **2024**, la última vigencia disponible en la descarga masiva de TerriData.
+- **Cobertura:** 1.102 municipios con información completa para 2024 (Bogotá incluida).
   Se excluyen los totales nacionales y departamentales.
 - **Limitaciones:** (1) son datos **reportados por los propios municipios**, que pueden tener errores o
-  rezagos; (2) es **un solo año**, una foto y no una tendencia; (3) 2024 fue el primer año de los nuevos
+  rezagos; (2) los grupos se arman con **un solo año**, una foto y no una tendencia (aunque el patrón del Valle
+  se repite de 2020 a 2024, ver sección 6); (3) 2024 fue el primer año de los nuevos
   alcaldes, así que la ejecución puede verse afectada por el empalme; (4) los valores per cápita dependen de
   las proyecciones de población del DANE; (5) las regalías son volátiles porque dependen de precios del
   petróleo y de minerales.
@@ -307,7 +323,7 @@ elif pagina.startswith("2"):
     )
     fig.update_layout(height=620)
     st.plotly_chart(fig, width="stretch")
-    st.markdown(
+    texto_base(
         """
 **Lectura.** El bloque más fuerte es el de la **autonomía fiscal**: la dependencia de transferencias se
 correlaciona negativamente con el ICA (≈ −0,78) y con el predial (≈ −0,69), y esos dos impuestos se
@@ -394,7 +410,7 @@ elif pagina.startswith("4"):
     tabla["Varianza acumulada"] = (tabla["Varianza acumulada"] * 100).round(1)
     st.dataframe(tabla.round(3), hide_index=True, width="stretch")
 
-    st.markdown(
+    texto_base(
         f"""
 **¿Cuántos componentes conservar?** La varianza **no** se concentra en uno o dos componentes: el primero
 explica cerca del {fmt_num(var['Varianza explicada'].iloc[0]*100, 0)}% y el segundo cerca del
@@ -423,7 +439,7 @@ iguales (en las pruebas de robustez, el índice ARI fue 0,93).
 | **CP1 – Dependencia vs. autonomía fiscal** | Dependencia de transferencias (+), ICA y predial per cápita (−), ahorro corriente (−) | Valores altos indican un municipio que vive de la Nación y recauda poco. Valores bajos indican un municipio con base tributaria propia |
 | **CP2 – Regalías y holgura vs. recaudo urbano** | Inversión en capital fijo, regalías, holgura y ahorro (+); predial e ICA (−) | Separa a los municipios que tienen recursos para invertir (regalías) y margen de funcionamiento de los que se sostienen con impuestos urbanos |
 | **CP3 – Regalías e inversión vs. solvencia del funcionamiento** | Regalías e inversión (+); holgura, ahorro y ejecución de inversión (−) | Muestra municipios que invierten mucho gracias a las regalías aunque tengan poco margen en su gasto corriente |
-| **CP4 – Endeudamiento** | Endeudamiento de largo plazo (+), balance primario (−) | Aísla a los municipios endeudados y con déficit |
+| **CP4 – Endeudamiento** | Endeudamiento de largo plazo (+), balance primario (−) | Aísla a los municipios con más pasivos frente a sus activos y con déficit |
 
 *Nota:* el signo de un componente es arbitrario (multiplicarlo por −1 no cambia nada). Lo que importa es
 qué variables van en la misma dirección y cuáles en direcciones opuestas.
@@ -490,7 +506,7 @@ elif pagina.startswith("5"):
     tabla_k["Silueta"] = tabla_k["Silueta"].round(3)
     st.dataframe(tabla_k, hide_index=True, width="stretch")
 
-    st.markdown(
+    texto_base(
         """
 **¿Cómo se eligió K = 4?** El codo no es muy marcado: la inercia cae fuerte hasta K = 3 o 4 y después
 baja más despacio. La silueta es más alta en K = 2 (≈ 0,25), pero esa partición solo separa a los municipios
@@ -553,9 +569,9 @@ categorías tajantes, y sus fronteras se mueven si cambian los municipios de la 
             """
 | Grupo | Rasgos (frente a la mediana nacional) | Ejemplos |
 |---|---|---|
-| **A · Caja apretada y poca inversión** (≈ 30% del país) | Tienen el **ahorro corriente más bajo** (≈ 38%), la **menor holgura** frente a la Ley 617, la **menor inversión en capital fijo** (≈ 8% del gasto) y el indicador de endeudamiento más alto. Su dependencia de transferencias (≈ 80%) es casi la mediana nacional (79%): no es lo que los define. Puntaje IDF ≈ 51,5 | Buenaventura, Buga, Jamundí, Sevilla |
+| **A · Caja apretada y poca inversión** (≈ 30% del país) | Tienen el **ahorro corriente más bajo** (≈ 38%), la **menor holgura** frente a la Ley 617, la **menor inversión en capital fijo** (≈ 8% de su inversión) y el indicador de endeudamiento más alto. Su dependencia de transferencias (≈ 80%) es casi la mediana nacional (79%): no es lo que los define. Puntaje IDF ≈ 51,5 | Buenaventura, Buga, Jamundí, Sevilla |
 | **B · Dependientes pero ordenados** | Son los más dependientes (≈ 85%) y recaudan poco, pero tienen **buen ahorro y la mayor holgura**. Su punto débil es la planeación: recaudan bastante más de lo que presupuestan (≈ 133%), algo que el DNP **penaliza** como mala programación del presupuesto, no lo premia. Puntaje ≈ 55,6 | Sobre todo de Centro Oriente (98 municipios) y el Pacífico (74, el 42% de los municipios de esa región) |
-| **C · Municipios de regalías e inversión** | Regalías ≈ 450.000 pesos por habitante (mediana) y **≈ 32% del gasto en capital fijo**. Su ejecución de inversión es la más baja, pero por poco (≈ 91,5% frente a 94,8% nacional): no es lo que los define. Puntaje ≈ 58,1 | Los que más regalías reciben por habitante: La Jagua del Pilar, Barrancas y Albania (La Guajira), Yaguará (Huila). En número, la mayoría está en Centro Oriente y el Caribe; en proporción, en los Llanos (37% de sus municipios) |
+| **C · Municipios de regalías e inversión** | Regalías ≈ 450.000 pesos por habitante (mediana) y **≈ 32% de su inversión en capital fijo**. Su ejecución de inversión es la más baja, pero por poco (≈ 91,5% frente a 94,8% nacional): no es lo que los define. Puntaje ≈ 58,1 | Los que más regalías reciben por habitante: La Jagua del Pilar, Barrancas y Albania (La Guajira), Yaguará (Huila). En número, la mayoría está en Centro Oriente y el Caribe; en proporción, en los Llanos (37% de sus municipios) |
 | **D · Autónomos con recaudo propio** | Dependen solo ≈ 52% de transferencias, con **predial e ICA 3 a 4 veces la mediana**, el mejor ahorro y el mejor balance. Puntaje ≈ 61,1 | Bogotá, Cali, Palmira, Yumbo, Candelaria |
 
 Las letras se asignan por tamaño del grupo (A es el más grande); **no son un ranking**. Que el puntaje IDF
@@ -720,7 +736,7 @@ mediana del país. El Valle en conjunto depende **menos** de la Nación que el r
 menos holgura frente al tope de la Ley 617 ({mediana(es_valle, "holgura")} frente a
 {mediana(~es_valle, "holgura")} puntos), menos ahorro corriente ({mediana(es_valle, "ahorro_corriente")}%
 frente a {mediana(~es_valle, "ahorro_corriente")}%) y destina a capital fijo apenas
-{mediana(es_valle, "inversion_fbkf")}% del gasto, frente a {mediana(~es_valle, "inversion_fbkf")}%.
+{mediana(es_valle, "inversion_fbkf")}% de su inversión, frente a {mediana(~es_valle, "inversion_fbkf")}%.
 
 **El puntaje IDF no lo ve.** El puntaje mediano del Valle ({mediana(es_valle, "puntaje_idf", 1)}) es casi
 igual al del resto del país ({mediana(~es_valle, "puntaje_idf", 1)}). Un ranking diría que el Valle es
@@ -827,8 +843,10 @@ promedio; su reto no es recaudar más sino **ganar margen después del funcionam
 El patrón (menos holgura, menos ahorro y menos inversión que el país) se repite de 2020 a 2024.
 
 ### 6. Limitaciones
-1. **Un solo año (2024)**, que además es de empalme entre administraciones. Un municipio puede cambiar de
-   grupo de un año a otro; lo ideal sería repetir el análisis con 2020 a 2024 y ver quién se mueve.
+1. **Los grupos usan un solo año (2024)**, que además es de empalme entre administraciones. Un municipio puede
+   cambiar de grupo de un año a otro. Las medianas del Valle se repiten de 2020 a 2024 (sección 6), pero
+   repetir la segmentación año por año, y sumar el IDF 2025 que el DNP publicó el 6 de noviembre de 2026,
+   queda como trabajo futuro.
 2. **Sensibilidad a la transformación:** sin logaritmo en las variables en pesos, los grupos cambian
    bastante (ARI ≈ 0,45), porque quedan dominados por los valores extremos. La decisión de usar logaritmo
    está justificada, pero condiciona el resultado.

@@ -22,18 +22,21 @@ SEMILLA = 42
 VARIABLES = {
     "dependencia_transferencias": (
         "Dependencia de transferencias",
-        "Parte de los ingresos totales que llega de la Nación (SGP y otras transferencias).",
+        "Parte de los ingresos totales que llega de la Nación: SGP y otras transferencias. "
+        "Según el DNP, el nuevo IDF no cuenta aquí las regalías.",
         "% de ingresos",
     ),
     "inversion_fbkf": (
         "Inversión en capital fijo",
-        "Parte del gasto que se va a formación bruta de capital fijo (obras, infraestructura).",
-        "% del gasto",
+        "Parte del gasto de inversión que se va a formación bruta de capital fijo "
+        "(obras, infraestructura, maquinaria y equipo).",
+        "% de la inversión",
     ),
     "endeudamiento_lp": (
         "Endeudamiento de largo plazo",
-        "Saldo de deuda de largo plazo frente a los ingresos corrientes.",
-        "% de ingresos corrientes",
+        "Pasivos frente a activos de la entidad (definición del DNP). Mide solvencia contable, "
+        "no solo deuda con bancos.",
+        "% de los activos",
     ),
     "ahorro_corriente": (
         "Ahorro corriente",
@@ -47,7 +50,8 @@ VARIABLES = {
     ),
     "ejecucion_ingresos": (
         "Ejecución de ingresos",
-        "Ingresos recaudados frente a los que se presupuestaron (más de 100 = recaudó más de lo planeado).",
+        "Ingresos recaudados frente a los presupuestados (el DNP la llama capacidad de programación y "
+        "recaudo). Lo ideal es cerca de 100: muy por encima indica que el presupuesto se quedó corto.",
         "% del presupuesto",
     ),
     "ejecucion_inversion": (

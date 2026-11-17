@@ -39,21 +39,22 @@ pueden resumir sus diferencias y en qué tipo caen los municipios del **Valle de
 
 | Variable | Qué mide |
 |---|---|
-| Dependencia de transferencias | % de los ingresos que llega de la Nación |
-| Inversión en capital fijo | % del gasto que se va a formación bruta de capital fijo |
-| Endeudamiento de largo plazo | Deuda de largo plazo frente a los ingresos corrientes |
+| Dependencia de transferencias | % de los ingresos que llega de la Nación (SGP y otras; sin regalías) |
+| Inversión en capital fijo | % del gasto de inversión que se va a formación bruta de capital fijo |
+| Endeudamiento de largo plazo | Pasivos frente a activos de la entidad (solvencia contable) |
 | Ahorro corriente | Lo que sobra de los ingresos corrientes después del funcionamiento |
 | Balance fiscal primario | Ingresos menos gastos, sin contar intereses |
-| Ejecución de ingresos | Recaudo frente a lo presupuestado |
+| Ejecución de ingresos | Recaudo frente a lo presupuestado (lo ideal es cerca de 100; el DNP penaliza desviarse) |
 | Ejecución de inversión | Inversión ejecutada frente a la presupuestada |
 | Holgura | Margen frente al tope de gastos de funcionamiento (Ley 617) |
 | Predial per cápita | Recaudo de predial por habitante |
 | ICA per cápita | Recaudo de industria y comercio por habitante |
 | Regalías per cápita | Regalías giradas por habitante |
 
-**Limitaciones de la fuente:** datos que reportan los mismos municipios (CUIPO y FUT); un solo año, que
-además es de empalme entre administraciones; los per cápita dependen de las proyecciones de población del
-DANE; las regalías son volátiles.
+**Limitaciones de la fuente:** datos que reportan los mismos municipios (CUIPO y FUT); los grupos usan un
+solo año, que además es de empalme entre administraciones; los per cápita dependen de las proyecciones de
+población del DANE; las regalías son volátiles. El DNP publicó el IDF 2025 el 6 de noviembre de 2026; aquí
+se usa 2024, la última vigencia en la descarga masiva de TerriData.
 
 ## 3. Metodología
 
@@ -104,7 +105,7 @@ mismas variables. Las letras no son un ranking.
   frente al 28,5% del resto del país (el primero entre los departamentos con 10 o más municipios). No es un
   problema de recaudo ni de dependencia: los 29 recaudan predial por encima de la mediana nacional y el Valle
   depende menos de la Nación que el resto (71% frente a 79%). Lo que lo distingue es el margen después de
-  funcionar: holgura de 21 frente a 28, ahorro corriente de 41% frente a 49% y 6% del gasto en capital fijo
+  funcionar: holgura de 21 frente a 28, ahorro corriente de 41% frente a 49% y 6% de la inversión en capital fijo
   frente a 14%. Su puntaje IDF (54,9) es casi igual al del resto (56,0): **el ranking no ve el patrón**.
   El corredor industrial (Cali, Yumbo, Palmira, Candelaria, El Cerrito…) es *autónomo*.
 - **Robustez en el tiempo:** con TerriData 2020–2024 (consulta hecha fuera de la app) el Valle tiene menos
