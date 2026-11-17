@@ -554,8 +554,8 @@ categorías tajantes, y sus fronteras se mueven si cambian los municipios de la 
 | Grupo | Rasgos (frente a la mediana nacional) | Ejemplos |
 |---|---|---|
 | **A · Caja apretada y poca inversión** (≈ 30% del país) | Tienen el **ahorro corriente más bajo** (≈ 38%), la **menor holgura** frente a la Ley 617, la **menor inversión en capital fijo** (≈ 8% del gasto) y el indicador de endeudamiento más alto. Su dependencia de transferencias (≈ 80%) es casi la mediana nacional (79%): no es lo que los define. Puntaje IDF ≈ 51,5 | Buenaventura, Buga, Jamundí, Sevilla |
-| **B · Dependientes pero ordenados** | Son los más dependientes (≈ 85%) y recaudan poco, pero tienen **buen ahorro y la mayor holgura**, y recaudan más de lo presupuestado. Puntaje ≈ 55,6 | Municipios pequeños y rurales, sobre todo de Centro Oriente y el Pacífico |
-| **C · Municipios de regalías e inversión** | Regalías ≈ 450.000 pesos por habitante (mediana) y **≈ 32% del gasto en capital fijo**. Tienen la ejecución de inversión más baja: les llega plata que les cuesta ejecutar. Puntaje ≈ 58,1 | Municipios petroleros y mineros de los Llanos, Caribe y Centro Oriente |
+| **B · Dependientes pero ordenados** | Son los más dependientes (≈ 85%) y recaudan poco, pero tienen **buen ahorro y la mayor holgura**. Su punto débil es la planeación: recaudan bastante más de lo que presupuestan (≈ 133%), algo que el DNP **penaliza** como mala programación del presupuesto, no lo premia. Puntaje ≈ 55,6 | Sobre todo de Centro Oriente (98 municipios) y el Pacífico (74, el 42% de los municipios de esa región) |
+| **C · Municipios de regalías e inversión** | Regalías ≈ 450.000 pesos por habitante (mediana) y **≈ 32% del gasto en capital fijo**. Su ejecución de inversión es la más baja, pero por poco (≈ 91,5% frente a 94,8% nacional): no es lo que los define. Puntaje ≈ 58,1 | Los que más regalías reciben por habitante: La Jagua del Pilar, Barrancas y Albania (La Guajira), Yaguará (Huila). En número, la mayoría está en Centro Oriente y el Caribe; en proporción, en los Llanos (37% de sus municipios) |
 | **D · Autónomos con recaudo propio** | Dependen solo ≈ 52% de transferencias, con **predial e ICA 3 a 4 veces la mediana**, el mejor ahorro y el mejor balance. Puntaje ≈ 61,1 | Bogotá, Cali, Palmira, Yumbo, Candelaria |
 
 Las letras se asignan por tamaño del grupo (A es el más grande); **no son un ranking**. Que el puntaje IDF
@@ -799,8 +799,9 @@ en duda leer el puntaje del IDF como si fuera unidimensional. El plano CP1-CP2 q
 Hay cuatro perfiles con lecturas económicas distintas: **caja apretada y poca inversión**, **dependientes
 pero ordenados**, **municipios de regalías e inversión** y **autónomos con recaudo propio**. La diferencia
 más útil es que **la dependencia de transferencias no implica desorden**: el grupo B es el más dependiente
-(≈ 85%), pero tiene mucho mejor ahorro y holgura que el A, cuya dependencia está en la mediana nacional. Al revés, el grupo C tiene recursos (regalías) pero es
-el que menos ejecuta su inversión. El puntaje IDF va de ≈ 51,5 (A) a ≈ 61,1 (D), pero eso no valida los
+(≈ 85%), pero tiene mucho mejor ahorro y holgura que el A, cuya dependencia está en la mediana nacional. Y el grupo C se define por
+sus regalías y su alta inversión en capital fijo; su ejecución de inversión es apenas un poco menor que la del
+resto. El puntaje IDF va de ≈ 51,5 (A) a ≈ 61,1 (D), pero eso no valida los
 grupos, porque el puntaje se calcula con 8 de las mismas variables. Lo importante es lo contrario: **dentro de
 cada cuartil del IDF conviven los cuatro perfiles**, y los grupos explican solo cerca del 22% de la variación
 del puntaje. Es decir, **municipios con puntajes parecidos pueden tener problemas muy distintos**.

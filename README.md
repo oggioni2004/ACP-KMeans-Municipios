@@ -84,8 +84,8 @@ número de componentes y K.
 | Grupo | Municipios | Rasgo principal | IDF mediano* |
 |---|---|---|---|
 | A · Caja apretada y poca inversión | 331 | Bajo ahorro corriente, poca holgura y poca inversión en capital fijo; dependencia en la mediana nacional | 51,5 |
-| B · Dependientes pero ordenados | 286 | Muy dependientes, pero con buen ahorro y holgura | 55,6 |
-| C · Municipios de regalías e inversión | 255 | Regalías altas, mucha inversión, baja ejecución | 58,1 |
+| B · Dependientes pero ordenados | 286 | Muy dependientes, pero con buen ahorro y holgura; recaudan mucho más de lo presupuestado (el DNP lo penaliza) | 55,6 |
+| C · Municipios de regalías e inversión | 255 | Regalías altas y mucha inversión en capital fijo | 58,1 |
 | D · Autónomos con recaudo propio | 230 | Predial e ICA altos, baja dependencia | 61,1 |
 
 \*El puntaje del IDF no entró al modelo, pero no sirve para validar los grupos: se calcula con 8 de las
