@@ -558,11 +558,41 @@ categorías tajantes, y sus fronteras se mueven si cambian los municipios de la 
 | **C · Municipios de regalías e inversión** | Regalías ≈ 450.000 pesos por habitante (mediana) y **≈ 32% del gasto en capital fijo**. Tienen la ejecución de inversión más baja: les llega plata que les cuesta ejecutar. Puntaje ≈ 58,1 | Municipios petroleros y mineros de los Llanos, Caribe y Centro Oriente |
 | **D · Autónomos con recaudo propio** | Dependen solo ≈ 52% de transferencias, con **predial e ICA 3 a 4 veces la mediana**, el mejor ahorro y el mejor balance. Puntaje ≈ 61,1 | Bogotá, Cali, Palmira, Yumbo, Candelaria |
 
-Las letras se asignan por tamaño del grupo (A es el más grande); **no son un ranking**. El puntaje IDF no
-entró al modelo y aun así sale distinto entre grupos, lo que sugiere que los perfiles capturan algo real del
-desempeño fiscal.
+Las letras se asignan por tamaño del grupo (A es el más grande); **no son un ranking**. Que el puntaje IDF
+cambie entre grupos **no valida** los perfiles: el puntaje se calcula con 8 de estas 11 variables, así que es
+lógico que se mueva con ellas. La prueba útil es la contraria, y está justo abajo.
             """
         )
+
+    st.subheader("¿El puntaje IDF basta para saber qué tipo de municipio es?")
+    # Cuartiles del puntaje: Q1 = el 25% de municipios con puntaje más bajo; Q4 = el 25% más alto
+    cuartil = pd.qcut(res["puntaje_idf"], 4, labels=False)
+    rangos = res.groupby(cuartil)["puntaje_idf"].agg(["min", "max"])
+    nombres_q = {q: f"Q{q + 1} · {fmt_num(r['min'])} a {fmt_num(r['max'])} puntos" for q, r in rangos.iterrows()}
+    composicion = pd.crosstab(cuartil.map(nombres_q), res["Nombre grupo"], normalize="index") * 100
+    composicion = composicion[[g for g in color_grupo if g in composicion.columns]]
+    fig = px.imshow(
+        composicion, text_auto=".0f", color_continuous_scale="Blues", zmin=0, zmax=100, aspect="auto",
+        labels={"x": "Grupo", "y": "Cuartil del puntaje IDF", "color": "% del cuartil"},
+        title="De cada cuartil del puntaje IDF, ¿qué % de municipios cae en cada grupo?",
+    )
+    fig.update_layout(height=330)
+    st.plotly_chart(fig, width="stretch")
+    # eta²: parte de la variación del puntaje IDF que se explica por el grupo (como un R² con el grupo)
+    media = res["puntaje_idf"].mean()
+    por_grupo = res.groupby("Grupo")["puntaje_idf"]
+    eta2 = (por_grupo.size() * (por_grupo.mean() - media) ** 2).sum() / ((res["puntaje_idf"] - media) ** 2).sum()
+    q2 = composicion.iloc[1]
+    st.markdown(
+        f"""
+**Lectura.** Si el puntaje bastara para describir a un municipio, cada cuartil tendría un solo tipo. No pasa:
+en el segundo cuartil ({q2.name.split(" · ")[1]}) hay
+{", ".join(f"{fmt_num(v, 0)}% en {g}" for g, v in q2.items())}. Los grupos explican solo el
+**{fmt_num(eta2 * 100, 0)}%** de la variación del puntaje IDF (*eta²*: la parte de la variación que se explica
+por pertenecer a un grupo). Es la evidencia central del trabajo: **un mismo puntaje esconde situaciones
+distintas**, y dos municipios con el mismo número pueden necesitar cosas muy diferentes.
+        """
+    )
 
     st.subheader("Silueta por municipio")
     s = res.sort_values(["Grupo", "Silueta"], ascending=[True, False]).reset_index(drop=True)
@@ -770,9 +800,10 @@ Hay cuatro perfiles con lecturas económicas distintas: **caja apretada y poca i
 pero ordenados**, **municipios de regalías e inversión** y **autónomos con recaudo propio**. La diferencia
 más útil es que **la dependencia de transferencias no implica desorden**: el grupo B es el más dependiente
 (≈ 85%), pero tiene mucho mejor ahorro y holgura que el A, cuya dependencia está en la mediana nacional. Al revés, el grupo C tiene recursos (regalías) pero es
-el que menos ejecuta su inversión. El puntaje IDF, que **no** entró al modelo, va de ≈ 51,5 (A) a ≈ 61,1 (D).
-Esto respalda los perfiles, pero también muestra que **municipios con puntajes parecidos pueden tener
-problemas muy distintos**.
+el que menos ejecuta su inversión. El puntaje IDF va de ≈ 51,5 (A) a ≈ 61,1 (D), pero eso no valida los
+grupos, porque el puntaje se calcula con 8 de las mismas variables. Lo importante es lo contrario: **dentro de
+cada cuartil del IDF conviven los cuatro perfiles**, y los grupos explican solo cerca del 22% de la variación
+del puntaje. Es decir, **municipios con puntajes parecidos pueden tener problemas muy distintos**.
 
 ### 4. ¿Son grupos claramente distinguibles?
 **No del todo.** La silueta promedio es ≈ 0,20 y cerca de 3% de los municipios tiene silueta negativa

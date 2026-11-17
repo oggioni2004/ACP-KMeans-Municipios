@@ -88,7 +88,12 @@ número de componentes y K.
 | C · Municipios de regalías e inversión | 255 | Regalías altas, mucha inversión, baja ejecución | 58,1 |
 | D · Autónomos con recaudo propio | 230 | Predial e ICA altos, baja dependencia | 61,1 |
 
-\*El puntaje del IDF no entró al modelo; se usa como contraste. Las letras no son un ranking.
+\*El puntaje del IDF no entró al modelo, pero no sirve para validar los grupos: se calcula con 8 de las
+mismas variables. Las letras no son un ranking.
+
+- **Un mismo puntaje esconde perfiles distintos:** en cada cuartil del puntaje IDF conviven los cuatro grupos,
+  y los grupos explican solo ≈ 22% de la variación del puntaje (*eta²*). La app lo muestra en vivo en la
+  sección 5.
 
 - **Separación:** la silueta es ≈ 0,20, una estructura débil. Los municipios forman un continuo y los
   grupos funcionan como arquetipos. El algoritmo es consistente (ARI de 0,97 a 1,00 con otras semillas),
