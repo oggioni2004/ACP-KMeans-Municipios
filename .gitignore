@@ -1,0 +1,12 @@
+# Datos crudos de TerriData (~370 MB): se regeneran con src/preparar_datos.py
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Claves
+.env
+.streamlit/secrets.toml
