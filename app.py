@@ -25,6 +25,7 @@ from analisis import (  # noqa: E402
     evaluar_k,
     perfil_grupos,
     preparar,
+    robustez,
     sugerir_componentes,
 )
 
@@ -68,6 +69,13 @@ def pipeline(variables, usar_log, recorte):
 def curva_k(variables, usar_log, recorte, n_comp, k_max=10):
     _, _, _, _, puntajes = pipeline(variables, usar_log, recorte)
     return evaluar_k(puntajes.iloc[:, :n_comp], 2, k_max)
+
+
+@st.cache_data(show_spinner=False)
+def pruebas_robustez(variables, usar_log, recorte, n_comp, k):
+    df = datos()
+    return robustez(df, list(variables), usar_log=usar_log, recorte=recorte, n_comp=n_comp, k=k,
+                    es_valle=(df["cod_depto"] == VALLE).values)
 
 
 @st.cache_data
@@ -569,6 +577,32 @@ desempeño fiscal.
     amb = res.nsmallest(10, "Silueta")[["municipio", "departamento", "Nombre grupo", "Silueta", "puntaje_idf"]]
     amb.columns = ["Municipio", "Departamento", "Grupo asignado", "Silueta", "Puntaje IDF"]
     st.dataframe(amb.round(2), hide_index=True, width="stretch")
+
+    st.subheader("¿Qué tan estables son los grupos? Pruebas de robustez")
+    st.markdown(
+        "Cada fila cambia **una** decisión del análisis y compara los grupos nuevos con los de arriba usando el "
+        "**ARI** (*Adjusted Rand Index*): 1 = mismos grupos; 0 = se parecen lo que se parecerían por azar. "
+        "Todo se calcula en vivo con la configuración de la barra lateral."
+    )
+    with st.spinner("Calculando las pruebas de robustez (unos segundos la primera vez)…"):
+        rob = pruebas_robustez(variables, usar_log, recorte, n_comp, k)
+    st.dataframe(
+        rob, hide_index=True, width="stretch",
+        column_config={
+            "ARI mínimo": st.column_config.NumberColumn(format="%.2f"),
+            "ARI promedio": st.column_config.NumberColumn(format="%.2f"),
+            "ARI máximo": st.column_config.NumberColumn(format="%.2f"),
+            "% del Valle en el grupo A": st.column_config.NumberColumn(format="%.0f%%"),
+            "% del resto en el grupo A": st.column_config.NumberColumn(format="%.0f%%"),
+        },
+    )
+    st.caption(
+        "**Cómo leerla.** *Semillas*: si el ARI es cercano a 1, K-Means llega siempre a la misma solución. "
+        "*Remuestreo*: se agrupan 50 muestras de municipios tomadas al azar (con reemplazo) y se compara; un ARI "
+        "bajo indica que la frontera entre grupos depende de qué municipios entran, algo esperable con una silueta "
+        "de ≈ 0,20. Las dos últimas columnas muestran qué parte del Valle y del resto del país cae en el grupo que "
+        "más se parece al A: si el Valle sigue muy por encima del resto, el hallazgo del Valle se sostiene."
+    )
 
     st.subheader("Busca un municipio")
     mpio = st.selectbox("Municipio", res.sort_values("municipio").apply(

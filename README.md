@@ -67,8 +67,9 @@ DANE; las regalías son volátiles.
    (criterio de Kaiser, ≈ 66% de la varianza).
 4. **K-Means** sobre los 4 componentes: se compara K = 2…10 con el método del codo y la silueta, y se
    elige **K = 4**. Luego se perfilan los grupos con las medianas de las variables originales.
-5. **Robustez:** estabilidad frente a la semilla aleatoria, al recorte, al número de componentes y al
-   logaritmo, medida con el ARI (*Adjusted Rand Index*).
+5. **Robustez:** estabilidad frente a la semilla aleatoria, al recorte, al número de componentes, al
+   logaritmo y al remuestreo de municipios, medida con el ARI (*Adjusted Rand Index*). La función
+   `robustez()` de `src/analisis.py` la calcula en vivo y la app la muestra al final de la sección 5.
 
 Toda la app calcula en vivo. Desde la barra lateral se pueden cambiar variables, transformación, recorte,
 número de componentes y K.

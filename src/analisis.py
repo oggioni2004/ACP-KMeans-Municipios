@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import adjusted_rand_score, silhouette_samples, silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -180,3 +180,91 @@ def perfil_grupos(df, etiquetas, variables):
     perfil = d.groupby("Grupo")[variables + ["puntaje_idf"]].median()
     perfil.insert(0, "Municipios", d.groupby("Grupo").size())
     return perfil
+
+
+# ----------------------------------------------------------------------------
+# Pruebas de robustez
+# ----------------------------------------------------------------------------
+def segmentar(df, variables, usar_log=True, recorte=0.01, n_comp=4, k=4, semilla=SEMILLA):
+    """Corre todo el proceso (preparación -> ACP -> K-Means) y devuelve las etiquetas (0, 1, 2…)."""
+    _, Z, _ = preparar(df, variables, usar_log=usar_log, recorte=recorte)
+    _, _, _, puntajes = ajustar_pca(Z)
+    km = KMeans(n_clusters=k, n_init=20, random_state=semilla).fit(puntajes.iloc[:, :n_comp])
+    return km.labels_
+
+
+def _letras(etiquetas):
+    """Misma regla que ajustar_kmeans: A es el grupo más grande, B el siguiente, etc."""
+    tam = pd.Series(etiquetas).value_counts()
+    mapa = {g: chr(65 + i) for i, g in enumerate(tam.index)}
+    return pd.Series(etiquetas).map(mapa).values
+
+
+def _pct_valle_en_a(ref_letras, etiquetas, es_valle):
+    """% del Valle y % del resto del país en el grupo de la variante que más se parece al grupo A."""
+    tabla = pd.crosstab(pd.Series(etiquetas), pd.Series(ref_letras))
+    en_a = np.asarray(etiquetas) == tabla["A"].idxmax()
+    return 100 * en_a[es_valle].mean(), 100 * en_a[~es_valle].mean()
+
+
+def robustez(df, variables, usar_log=True, recorte=0.01, n_comp=4, k=4, es_valle=None, n_boot=50):
+    """Compara la segmentación elegida con variantes, usando el ARI.
+
+    ARI (Adjusted Rand Index): 1 = las dos agrupaciones son idénticas; 0 = se parecen lo que se
+    parecerían por azar. Cada fila cambia UNA decisión y mide cuánto cambian los grupos.
+    es_valle: vector de True/False (uno por municipio) que marca los del Valle del Cauca.
+    """
+    base = dict(usar_log=usar_log, recorte=recorte, n_comp=n_comp, k=k)
+    ref = segmentar(df, variables, **base)
+    ref_letras = _letras(ref)
+    filas = []
+
+    def agregar(prueba, pregunta, lista_etiquetas):
+        aris = [adjusted_rand_score(ref, e) for e in lista_etiquetas]
+        fila = {
+            "Prueba": prueba,
+            "Qué pregunta responde": pregunta,
+            "ARI mínimo": min(aris),
+            "ARI promedio": float(np.mean(aris)),
+            "ARI máximo": max(aris),
+        }
+        if es_valle is not None:
+            pct = np.array([_pct_valle_en_a(ref_letras, e, es_valle) for e in lista_etiquetas])
+            fila["% del Valle en el grupo A"] = pct[:, 0].mean()
+            fila["% del resto en el grupo A"] = pct[:, 1].mean()
+        filas.append(fila)
+
+    # 1. Otra semilla: ¿el algoritmo llega siempre a la misma solución?
+    agregar("Otras 10 semillas aleatorias", "¿K-Means llega siempre a la misma solución?",
+            [segmentar(df, variables, **base, semilla=s) for s in range(1, 11)])
+
+    # 2. Recorte de extremos
+    otro = 0.0 if recorte else 0.01
+    agregar("Sin recorte de extremos" if recorte else "Con recorte 1%/99%", "¿Dependen de los valores extremos?",
+            [segmentar(df, variables, **{**base, "recorte": otro})])
+
+    # 3. Número de componentes (uno menos y uno más)
+    for nc in (n_comp - 1, n_comp + 1):
+        if 2 <= nc <= len(variables):
+            agregar(f"{nc} componentes en vez de {n_comp}", "¿Dependen de cuántos componentes se usan?",
+                    [segmentar(df, variables, **{**base, "n_comp": nc})])
+
+    # 4. Logaritmo (solo si hay variables en pesos en el modelo)
+    if any(v in VARS_PESOS for v in variables):
+        agregar("Sin logaritmo" if usar_log else "Con logaritmo", "¿Dependen de la transformación de las variables en pesos?",
+                [segmentar(df, variables, **{**base, "usar_log": not usar_log})])
+
+    # 5. Remuestreo (bootstrap): se agrupan muestras de municipios tomadas al azar con reemplazo
+    #    y luego se clasifica a todos los municipios con esos grupos.
+    _, Z, _ = preparar(df, variables, usar_log=usar_log, recorte=recorte)
+    datos = ajustar_pca(Z)[3].iloc[:, :n_comp].values
+    rng = np.random.default_rng(SEMILLA)
+    remuestras = []
+    for b in range(n_boot):
+        idx = rng.choice(len(datos), len(datos), replace=True)
+        km = KMeans(n_clusters=k, n_init=10, random_state=b).fit(datos[idx])
+        remuestras.append(km.predict(datos))
+    agregar(f"Remuestreo de municipios ({n_boot} réplicas)", "¿Dependen de qué municipios entraron a la muestra?",
+            remuestras)
+
+    return pd.DataFrame(filas)
