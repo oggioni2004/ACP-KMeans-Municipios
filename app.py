@@ -494,14 +494,18 @@ elif pagina.startswith("5"):
         """
 **¿Cómo se eligió K = 4?** El codo no es muy marcado: la inercia cae fuerte hasta K = 3 o 4 y después
 baja más despacio. La silueta es más alta en K = 2 (≈ 0,25), pero esa partición solo separa a los municipios
-"autónomos" de los "dependientes", algo que el CP1 ya muestra. Con **K = 4** la silueta baja poco
-(≈ 0,20) y a cambio aparecen dos perfiles que tienen sentido económico y que K = 2 esconde: los
-**municipios de regalías** y la diferencia entre los municipios **con caja apretada** y los dependientes
-**ordenados**. Con K ≥ 5 los grupos nuevos se parten en pedazos sin una lectura distinta.
+"autónomos" de los "dependientes", algo que el CP1 ya muestra. **K = 3 y K = 4 tienen casi la misma
+silueta (0,202 y 0,196), y K = 3 es más estable** cuando se remuestrean los municipios (ARI promedio ≈ 0,82
+frente a ≈ 0,51; mueve K a 3 en la barra lateral y mira la tabla de robustez al final de esta sección).
+Elegí **K = 4 por interpretación, no por estadística**: separa a los **municipios de regalías**, que tienen una
+lógica fiscal distinta, y distingue a los municipios **con caja apretada** de los dependientes **ordenados**.
+Con K ≥ 5 los grupos nuevos se parten en pedazos sin una lectura distinta. La conclusión sobre el Valle no
+depende de esta elección: con K = 3 también queda sobrerrepresentado en el grupo de caja apretada (74%
+frente a 37% del resto del país).
 
 **Hay que decirlo claro:** una silueta de 0,20 indica una estructura **débil**. Los municipios no forman islas
 separadas, sino un **continuo** con zonas más densas. Los grupos sirven como **perfiles típicos**, no como
-categorías tajantes.
+categorías tajantes, y sus fronteras se mueven si cambian los municipios de la muestra.
         """
     )
 
@@ -774,8 +778,14 @@ problemas muy distintos**.
 **No del todo.** La silueta promedio es ≈ 0,20 y cerca de 3% de los municipios tiene silueta negativa
 (están en la frontera entre dos grupos). Los municipios forman un **continuo** con zonas de mayor densidad,
 no islas separadas. Los grupos sirven como **arquetipos** para orientar el análisis, no como etiquetas
-definitivas. En cambio, el resultado sí es **estable**: con otras semillas aleatorias el ARI es de 0,97 a 0,99,
-y sin recorte de extremos o con 5 componentes es de 0,92 a 0,93.
+definitivas.
+
+**Qué es estable y qué no.** El algoritmo es consistente: con otras semillas aleatorias el ARI va de 0,97 a
+1,00, y sin recorte de extremos o con 3 o 5 componentes queda entre 0,90 y 0,93. Pero los grupos exactos
+**no** son estables a la muestra: si se remuestrean los municipios, el ARI promedio cae a ≈ 0,51, porque las
+fronteras de un continuo se mueven. K = 3 sería más estable (≈ 0,82); se eligió K = 4 por su lectura
+económica. Lo que sí resiste todas las pruebas es el hallazgo central: el Valle queda en el grupo de caja
+apretada con el doble o más de frecuencia que el resto del país (tabla al final de la sección 5).
 
 ### 5. Relación con la pregunta: el Valle del Cauca
 El Valle **no se parece al promedio nacional, aunque su puntaje IDF sí**: el 69% de sus municipios está en

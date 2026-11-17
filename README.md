@@ -91,7 +91,10 @@ número de componentes y K.
 \*El puntaje del IDF no entró al modelo; se usa como contraste. Las letras no son un ranking.
 
 - **Separación:** la silueta es ≈ 0,20, una estructura débil. Los municipios forman un continuo y los
-  grupos funcionan como arquetipos. El resultado sí es estable (ARI de 0,97 a 0,99 con otras semillas).
+  grupos funcionan como arquetipos. El algoritmo es consistente (ARI de 0,97 a 1,00 con otras semillas),
+  pero los grupos exactos cambian si se remuestrean los municipios (ARI ≈ 0,51). K = 3 es más estable
+  (≈ 0,82) y tiene casi la misma silueta; K = 4 se eligió por interpretación, porque separa a los
+  municipios de regalías. El hallazgo del Valle se mantiene en todas las pruebas.
 - **Valle del Cauca:** el **69% de sus municipios (29 de 42)** está en *caja apretada y poca inversión*,
   frente al 28,5% del resto del país (el primero entre los departamentos con 10 o más municipios). No es un
   problema de recaudo ni de dependencia: los 29 recaudan predial por encima de la mediana nacional y el Valle
